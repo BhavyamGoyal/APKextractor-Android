@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,28 +14,35 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 
-class ApkCardAdapter(var apkList: ArrayList<ApkData>, val context: Context) : RecyclerView.Adapter<ApkCardAdapter.ApkListViewHolder>(){
+class ApkCardAdapter(var apkList: ArrayList<ApkData>, val context: Context) : RecyclerView.Adapter<ApkCardAdapter.ApkListViewHolder>() {
 
-    //var mItemClickListener: OnContextItemClickListener? = null
+    var mItemClickListener: OnContextItemClickListener? = null
 
     init {
-     //   mItemClickListener = context as MainActivity
+        //   mItemClickListener = context as MainActivity
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApkListViewHolder {
-        return ApkListViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_apk_item, parent, false), context, apkList)
+        return ApkListViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.card_item, parent, false),
+            context,
+            apkList
+        )
     }
 
     override fun onBindViewHolder(holder: ApkListViewHolder, position: Int) {
         holder.mIconImageView.setImageDrawable(context.packageManager.getApplicationIcon(apkList.get(position).appInfo))
-        holder.mLabelTextView.text = context.packageManager.getApplicationLabel(apkList.get(position).appInfo).toString()
+        holder.mLabelTextView.text =
+                context.packageManager.getApplicationLabel(apkList.get(position).appInfo).toString()
         holder.mPackageTextView.text = apkList.get(position).packageName
     }
 
     override fun getItemCount(): Int {
         return apkList.size
     }
-    inner class ApkListViewHolder(view: View, context: Context, apkList: ArrayList<ApkData>) : RecyclerView.ViewHolder(view) {
+
+    inner class ApkListViewHolder(view: View, context: Context, apkList: ArrayList<ApkData>) :
+        RecyclerView.ViewHolder(view) {
 
         val mIconImageView: ImageView = view.findViewById(R.id.apk_icon);
         val mLabelTextView: TextView = view.findViewById(R.id.apk_label_tv)
@@ -52,7 +60,11 @@ class ApkCardAdapter(var apkList: ArrayList<ApkData>, val context: Context) : Re
                 if (Utilities.checkPermission(context as MainActivity)) {
                     Utilities.extractApk(apkList.get(adapterPosition))
                     val rootView: View = context.window.decorView.findViewById(android.R.id.content)
-                    Snackbar.make(rootView, "${apkList.get(adapterPosition).appName} apk extracted successfully", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        rootView,
+                        "${apkList.get(adapterPosition).appName} apk extracted successfully",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
 
@@ -79,8 +91,7 @@ class ApkCardAdapter(var apkList: ArrayList<ApkData>, val context: Context) : Re
             }
         }
     }
-
+}
     interface OnContextItemClickListener {
         fun onItemClicked(packageName: String)
     }
-}
